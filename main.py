@@ -2,6 +2,9 @@ import pygame
 import math
 from node import *
 from algorithm import algorithm
+from buttons import Button
+
+pygame.font.init()
 
 WIDTH = 600
 UI_OFFSET = 10
@@ -31,12 +34,16 @@ def draw_grid(win, rows, width):
     for j in range(rows):
         pygame.draw.line(win, GREY, (j * gap, 0), (j * gap, limit_pixel))
 
-def draw(win, grid, rows, width):
+def draw(win, grid, rows, width, buttons):
     win.fill(WHITE)
     for row in grid:
         for node in row[:rows - UI_OFFSET]: 
             node.draw(win)
     draw_grid(win, rows, width)
+    
+    for button in buttons:
+        button.draw(win)
+
     pygame.display.update()
 
 def get_clicked_pos(pos, rows, width):
@@ -48,13 +55,11 @@ def get_clicked_pos(pos, rows, width):
 
 def run_simulation(grid, ROWS, start, end, win, width):
     reset(grid, ROWS, start, end)
-
     for row in grid:
         for node in row:
             node.update_neighbors(grid)
     
-    ret = algorithm(lambda: draw(win, grid, ROWS, width), grid, start, end)
-    return ret
+    return algorithm(lambda: draw(win, grid, ROWS, width, []), grid, start, end)
 
 def reset(grid, ROWS, start, end):
     for row in grid:
@@ -69,8 +74,20 @@ def main(win, width):
     end = None
     run = True
 
+    gap = width // ROWS
+    ui_start_y = (ROWS - UI_OFFSET) * gap
+    
+    btn_y = ui_start_y + 20
+    btn_width = 100
+    btn_height = 30
+    
+    clear_btn = Button(50, btn_y, btn_width, btn_height, "Clear (D)")
+    reset_btn = Button(50, btn_y + 40, btn_width, btn_height, "Reset (R)")
+    
+    buttons = [clear_btn, reset_btn]
+
     while run:
-        draw(win, grid, ROWS, width)
+        draw(win, grid, ROWS, width, buttons)
         
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -90,6 +107,15 @@ def main(win, width):
                         end.make_end()
                     elif spot != end and spot != start:
                         spot.make_barrier()
+                
+                else:
+                    if clear_btn.is_clicked(pos):
+                        start = None
+                        end = None
+                        grid = make_grid(ROWS, width)
+                    
+                    elif reset_btn.is_clicked(pos):
+                        reset(grid, ROWS, start, end)
 
             elif pygame.mouse.get_pressed()[2]: 
                 pos = pygame.mouse.get_pos()
@@ -109,7 +135,7 @@ def main(win, width):
                     end = None
                     grid = make_grid(ROWS, width)
 
-                elif event.key == pygame.K_r:
+                if event.key == pygame.K_r:
                     reset(grid, ROWS, start, end)
                 
                 elif event.key == pygame.K_SPACE and start and end:

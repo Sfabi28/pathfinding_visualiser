@@ -2,7 +2,7 @@ import pygame
 import math
 from node import *
 from algorithm import algorithm
-from buttons import Button
+from buttons import Button, WATER, WATER_HOVER, MUD, MUD_HOVER, BUTTON_COLOR, BUTTON_HOVER_COLOR
 
 pygame.font.init()
 
@@ -73,18 +73,24 @@ def main(win, width):
     start = None
     end = None
     run = True
+    
+    current_brush = "barrier" 
 
     gap = width // ROWS
     ui_start_y = (ROWS - UI_OFFSET) * gap
     
-    btn_y = ui_start_y + 20
-    btn_width = 100
+    btn_y = ui_start_y + 15
+    btn_width = 90
     btn_height = 30
     
-    clear_btn = Button(50, btn_y, btn_width, btn_height, "Clear (D)")
-    reset_btn = Button(50, btn_y + 40, btn_width, btn_height, "Reset (R)")
+    clear_btn = Button(20, btn_y, btn_width, btn_height, "Clear (D)")
+    reset_btn = Button(20, btn_y + 40, btn_width, btn_height, "Reset (R)")
     
-    buttons = [clear_btn, reset_btn]
+    wall_btn = Button(140, btn_y, btn_width, btn_height, "Wall", BUTTON_COLOR, BUTTON_HOVER_COLOR)
+    water_btn = Button(140 + 100, btn_y, btn_width, btn_height, "Water", WATER, WATER_HOVER)
+    mud_btn = Button(140 + 200, btn_y, btn_width, btn_height, "Mud", MUD, MUD_HOVER)
+    
+    buttons = [clear_btn, reset_btn, wall_btn, water_btn, mud_btn]
 
     while run:
         draw(win, grid, ROWS, width, buttons)
@@ -99,6 +105,7 @@ def main(win, width):
                 
                 if col < ROWS - UI_OFFSET: 
                     spot = grid[row][col]
+                    
                     if not start and spot != end:
                         start = spot
                         start.make_start()
@@ -106,16 +113,31 @@ def main(win, width):
                         end = spot
                         end.make_end()
                     elif spot != end and spot != start:
-                        spot.make_barrier()
+                        if current_brush == "barrier":
+                            spot.make_barrier()
+                        elif current_brush == "mud":
+                            spot.make_mud()
+                        elif current_brush == "water":
+                            spot.make_water()
                 
                 else:
                     if clear_btn.is_clicked(pos):
                         start = None
                         end = None
                         grid = make_grid(ROWS, width)
+                        current_brush = "barrier"
                     
                     elif reset_btn.is_clicked(pos):
                         reset(grid, ROWS, start, end)
+
+                    elif wall_btn.is_clicked(pos):
+                        current_brush = "barrier"
+                    
+                    elif water_btn.is_clicked(pos):
+                        current_brush = "water"
+
+                    elif mud_btn.is_clicked(pos):
+                        current_brush = "mud"
 
             elif pygame.mouse.get_pressed()[2]: 
                 pos = pygame.mouse.get_pos()
@@ -134,6 +156,7 @@ def main(win, width):
                     start = None
                     end = None
                     grid = make_grid(ROWS, width)
+                    current_brush = "barrier"
 
                 if event.key == pygame.K_r:
                     reset(grid, ROWS, start, end)

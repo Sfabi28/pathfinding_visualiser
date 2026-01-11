@@ -49,7 +49,7 @@ def algorithm(draw, grid, start, end):
             return 0
 
         for neighbor in current.neighbors: # se non sono arrivato alla fine allora guardo i miei vicini
-            temp_g_score = g_score[current] + 1 # +1 è il costo di fare quel passo fino al vicino
+            temp_g_score = g_score[current] + neighbor.weight # +1 è il costo di fare quel passo fino al vicino
 
             if temp_g_score < g_score[neighbor]: # questo if serve principalmente s eho gia esplorato quel vicino, se ha una G minore vuol dire che dalla partenza a quel vicino c'è una strada piu veloce rispetto a quella che ho seguito adesso
 

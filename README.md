@@ -2,7 +2,8 @@
 
 ![Last Commit](https://img.shields.io/github/last-commit/Sfabi28/pathfinding_visualizer?style=for-the-badge&color=blue)
 
-A robust, interactive, and real-time visualization tool for the **A* Search Algorithm** built with Python and Pygame. It demonstrates the efficiency of heuristic-based pathfinding, featuring dynamic wall placement, instant feedback, and optimized data structures (`PriorityQueue` & `Hash Set`).
+A robust, interactive, and real-time visualization tool for the **Weighted A* Search Algorithm** built with Python and Pygame.
+Unlike standard visualizers, this project features **Weighted Terrain** (Mud and Water), forcing the algorithm to calculate trade-offs between a shorter path and a "cheaper" path (avoiding high-cost terrain).
 
 ## 📁 1. Installation
 
@@ -14,6 +15,7 @@ Ensure you have **Python 3.x** installed. To keep your environment clean, using 
     ├── main.py             <--- RUN THIS FILE
     ├── algorithm.py        (Core A* Logic)
     ├── node.py             (Cell/Node Class)
+    ├── buttons.py          (UI & Button Class)
     └── requirements.txt    (Dependencies)
 ```
 
@@ -66,4 +68,32 @@ The simulation runs a weighted A* algorithm using Manhattan Distance as the heur
         2. It explores neighbors (Up, Down, Left, Right).
         3. If a neighbor offers a shorter path (lower G), the parent link is updated.
         4. This continues until the End node is reached or no path is possible.
+```
+
+## 🌍 5. Terrain & Weights
+
+This visualizer uses a Weighted Graph. The algorithm treats different colors as different "costs" to traverse.
+
+```text
+Terrain	Color	Weight (Cost)	Effect
+Street	⬜ White	1	Default movement speed.
+Mud	🟫 Brown	5	Slows down the path. The algorithm will try to go around it.
+Water	🟦 Blue	15	Very slow. The algorithm will avoid it unless necessary.
+Wall	⬛ Black	∞	Impassable.
+```
+
+## 📊 6. Visual Legend
+
+To visualize both the Terrain (what the ground is) and the Algorithm State (what the computer is thinking), the tool uses a layered drawing approach:
+
+    Background Square: Represents the Terrain (White, Brown, or Blue).
+
+    Overlay Circle: Represents the Algorithm's current state.
+
+```text
+Algorithm State Colors:
+
+    [GREEN Circle] : Open Set. Nodes discovered/queued for inspection.
+    [RED Circle]   : Closed Set. Nodes already visited.
+    [PURPLE Circle]: The Path. The optimal route found.
 ```

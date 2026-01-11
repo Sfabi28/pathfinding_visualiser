@@ -2,9 +2,13 @@ import pygame
 
 BLACK = (0, 0, 0)
 TEXT_COLOR = (0, 0, 0)
+GREEN = (0, 255, 0)
 
 BUTTON_COLOR = (180, 180, 180)
 BUTTON_HOVER_COLOR = (200, 200, 200)
+
+WALL = (100, 100, 100)
+WALL_HOVER = (130, 130, 130)
 
 WATER = (64, 164, 223)
 WATER_HOVER = (100, 200, 255)
@@ -20,13 +24,17 @@ class Button:
         self.base_color = base_color
         self.hover_color = hover_color
     
-    def draw(self, win):
+    def draw(self, win, is_selected=False):
         mouse_pos = pygame.mouse.get_pos()
         
         color = self.hover_color if self.rect.collidepoint(mouse_pos) else self.base_color
         
         pygame.draw.rect(win, color, self.rect)
-        pygame.draw.rect(win, BLACK, self.rect, 2)
+        
+        if is_selected:
+            pygame.draw.rect(win, GREEN, self.rect, 4)
+        else:
+            pygame.draw.rect(win, BLACK, self.rect, 2)
         
         text_surf = self.font.render(self.text, True, TEXT_COLOR)
         text_rect = text_surf.get_rect(center=self.rect.center)

@@ -2,7 +2,7 @@ import pygame
 import math
 from node import *
 from algorithm import algorithm
-from buttons import Button, WATER, WATER_HOVER, MUD, MUD_HOVER, BUTTON_COLOR, BUTTON_HOVER_COLOR
+from buttons import *
 
 pygame.font.init()
 
@@ -34,7 +34,7 @@ def draw_grid(win, rows, width):
     for j in range(rows):
         pygame.draw.line(win, GREY, (j * gap, 0), (j * gap, limit_pixel))
 
-def draw(win, grid, rows, width, buttons):
+def draw(win, grid, rows, width, buttons, current_brush):
     win.fill(WHITE)
     for row in grid:
         for node in row[:rows - UI_OFFSET]: 
@@ -42,7 +42,15 @@ def draw(win, grid, rows, width, buttons):
     draw_grid(win, rows, width)
     
     for button in buttons:
-        button.draw(win)
+        selected = False
+        if button.text == "Wall" and current_brush == "barrier":
+            selected = True
+        elif button.text == "Water" and current_brush == "water":
+            selected = True
+        elif button.text == "Mud" and current_brush == "mud":
+            selected = True
+
+        button.draw(win, selected)
 
     pygame.display.update()
 
@@ -59,12 +67,17 @@ def run_simulation(grid, ROWS, start, end, win, width):
         for node in row:
             node.update_neighbors(grid)
     
-    return algorithm(lambda: draw(win, grid, ROWS, width, []), grid, start, end)
+    return algorithm(lambda: draw(win, grid, ROWS, width, [], None), grid, start, end)
 
 def reset(grid, ROWS, start, end):
     for row in grid:
         for node in row[:ROWS - UI_OFFSET]:
-            if not node.is_barrier() and node != end and node != start:
+            if node.is_barrier() or node == start or node == end:
+                continue
+            
+            if node.weight > 1:
+                node.color = node.base_color
+            else:
                 node.reset()
 
 def main(win, width):
@@ -86,14 +99,14 @@ def main(win, width):
     clear_btn = Button(20, btn_y, btn_width, btn_height, "Clear (D)")
     reset_btn = Button(20, btn_y + 40, btn_width, btn_height, "Reset (R)")
     
-    wall_btn = Button(140, btn_y, btn_width, btn_height, "Wall", BUTTON_COLOR, BUTTON_HOVER_COLOR)
+    wall_btn = Button(140, btn_y, btn_width, btn_height, "Wall", WALL, WALL_HOVER)
     water_btn = Button(140 + 100, btn_y, btn_width, btn_height, "Water", WATER, WATER_HOVER)
     mud_btn = Button(140 + 200, btn_y, btn_width, btn_height, "Mud", MUD, MUD_HOVER)
     
     buttons = [clear_btn, reset_btn, wall_btn, water_btn, mud_btn]
 
     while run:
-        draw(win, grid, ROWS, width, buttons)
+        draw(win, grid, ROWS, width, buttons, current_brush)
         
         for event in pygame.event.get():
             if event.type == pygame.QUIT:

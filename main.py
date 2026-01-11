@@ -6,7 +6,7 @@ from buttons import *
 
 pygame.font.init()
 
-WIDTH = 600
+WIDTH = 612
 UI_OFFSET = 10
 WIN = pygame.display.set_mode((WIDTH, WIDTH))
 pygame.display.set_caption("A* Pathfinding Visualizer")
@@ -81,7 +81,7 @@ def reset(grid, ROWS, start, end):
                 node.reset()
 
 def main(win, width):
-    ROWS = 50
+    ROWS = 51
     grid = make_grid(ROWS, width)
     start = None
     end = None

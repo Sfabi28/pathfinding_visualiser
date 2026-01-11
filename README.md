@@ -1,6 +1,6 @@
 # A* Pathfinding Visualizer
 
-![Last Commit](https://img.shields.io/github/last-commit/YOUR_USERNAME/pathfinding_visualizer?style=for-the-badge&color=blue)
+![Last Commit](https://img.shields.io/github/last-commit/Sfabi28/pathfinding_visualizer?style=for-the-badge&color=blue)
 
 A robust, interactive, and real-time visualization tool for the **A* Search Algorithm** built with Python and Pygame. It demonstrates the efficiency of heuristic-based pathfinding, featuring dynamic wall placement, instant feedback, and optimized data structures (`PriorityQueue` & `Hash Set`).
 

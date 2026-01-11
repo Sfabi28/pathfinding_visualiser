@@ -83,7 +83,16 @@ def main(win, width):
             
             if event.type == pygame.KEYDOWN:
                 
-                if event.key == pygame.K_SPACE and start and end:
+                if event.key == pygame.K_d:
+                    for row in grid:
+                        for node in row:
+                            node.reset()
+                            if node == start:
+                                start = None
+                            elif node == end:
+                                end = None
+                
+                elif event.key == pygame.K_SPACE and start and end:
                     for row in grid:
                         for node in row:
                             node.update_neighbors(grid)

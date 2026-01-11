@@ -6,11 +6,13 @@ def h(p1, p2):
     x2, y2 = p2
     return abs(x1 - x2) + abs(y1 - y2)
 
-def reconstruct_path(came_from, current, draw):
+def reconstruct_path(came_from, current, draw, start):
     while current in came_from:
         current = came_from[current]
-        current.make_path()
-        draw()
+        
+        if current != start:
+            current.make_path()
+            draw()
 
 # G = quanti passi ho fatto per arrivare qua
 # H = quanto sono lontano dalla fine? in linea d'area
@@ -42,7 +44,7 @@ def algorithm(draw, grid, start, end):
         open_set_hash.remove(current) # dopo aver scelto la mossa da controllare la rimuovo dal taccuino
 
         if current == end: # se sono arrivato alla fine allora ripercorro tutto il percorso fatto e all'indietro e colorandolo via via
-            reconstruct_path(came_from, end, draw)
+            reconstruct_path(came_from, end, draw, start)
             end.make_end()
             return True
 

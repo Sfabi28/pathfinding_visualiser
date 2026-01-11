@@ -6,7 +6,7 @@ WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 PURPLE = (128, 0, 128)
 ORANGE = (255, 165, 0)
-TURQUOISE = (64, 224, 208)
+BLUE = (0, 0, 255)
 GREY = (128, 128, 128)
 
 class Node:
@@ -36,7 +36,7 @@ class Node:
         return self.color == ORANGE
 
     def is_end(self):
-        return self.color == TURQUOISE
+        return self.color == BLUE
 
     def reset(self):
         self.color = WHITE
@@ -54,7 +54,7 @@ class Node:
         self.color = BLACK
 
     def make_end(self):
-        self.color = TURQUOISE
+        self.color = BLUE
 
     def make_path(self):
         self.color = PURPLE

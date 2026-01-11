@@ -15,7 +15,9 @@ class Node:
         self.col = col
         self.x = row * width
         self.y = col * width
-        self.color = WHITE
+        self.color = WHITE  
+        self.base_color = WHITE 
+        self.weight = 1    
         self.neighbors = []
         self.width = width
         self.total_rows = total_rows
@@ -40,6 +42,8 @@ class Node:
 
     def reset(self):
         self.color = WHITE
+        self.base_color = WHITE
+        self.weight = 1
 
     def make_start(self):
         self.color = ORANGE
@@ -60,7 +64,15 @@ class Node:
         self.color = PURPLE
 
     def draw(self, win):
-        pygame.draw.rect(win, self.color, (self.x, self.y, self.width, self.width))
+        pygame.draw.rect(win, self.base_color, (self.x, self.y, self.width, self.width))
+
+        if self.is_start() or self.is_end() or self.is_barrier():
+            pygame.draw.rect(win, self.color, (self.x, self.y, self.width, self.width))
+
+        elif self.color != self.base_color:
+            center = (self.x + self.width // 2, self.y + self.width // 2)
+            radius = self.width // 3
+            pygame.draw.circle(win, self.color, center, radius)
     
     def update_neighbors(self, grid):
         self.neighbors = []
@@ -77,6 +89,18 @@ class Node:
         if self.col > 0 and not grid[self.row][self.col - 1].is_barrier():
             self.neighbors.append(grid[self.row][self.col - 1])
 
+    def make_mud(self):
+        self.color = (139, 69, 19)
+        self.base_color = (139, 69, 19)
+        self.weight = 5
+
+    def make_water(self):
+        self.color = (64, 164, 223)
+        self.base_color = (64, 164, 223)
+        self.weight = 15
+        
+    def is_special(self):
+        return self.weight > 1
 
     def __lt__(self, other):
         return False

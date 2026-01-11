@@ -57,7 +57,7 @@ def main(win, width):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
-
+            
             if pygame.mouse.get_pressed()[0]: 
                 pos = pygame.mouse.get_pos()
                 row, col = get_clicked_pos(pos, ROWS, width)
@@ -102,9 +102,16 @@ def main(win, width):
                 elif event.key == pygame.K_SPACE and start and end:
                     for row in grid:
                         for node in row:
+                            if not node.is_barrier() and node != end and node != start:
+                                node.reset()
+                                
+                    for row in grid:
+                        for node in row:
                             node.update_neighbors(grid)
                     
-                    algorithm(lambda: draw(win, grid, ROWS, width), grid, start, end)
+                    ret = algorithm(lambda: draw(win, grid, ROWS, width), grid, start, end)
+                    if not ret:
+                        return
 
     pygame.quit()
 

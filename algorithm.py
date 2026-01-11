@@ -38,7 +38,7 @@ def algorithm(draw, grid, start, end):
         
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                pygame.quit()
+                return False
 
         current = open_set.get()[2] # controllo il taccuino, ho 10 elementi da controllare ma in cima, grazie a PriorityQueue() ho sempre l'elemento con la F minore
         open_set_hash.remove(current) # dopo aver scelto la mossa da controllare la rimuovo dal taccuino

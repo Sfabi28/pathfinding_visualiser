@@ -38,7 +38,7 @@ def algorithm(draw, grid, start, end):
         
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                return False
+                return 2
 
         current = open_set.get()[2] # controllo il taccuino, ho 10 elementi da controllare ma in cima, grazie a PriorityQueue() ho sempre l'elemento con la F minore
         open_set_hash.remove(current) # dopo aver scelto la mossa da controllare la rimuovo dal taccuino
@@ -46,7 +46,7 @@ def algorithm(draw, grid, start, end):
         if current == end: # se sono arrivato alla fine allora ripercorro tutto il percorso fatto e all'indietro e colorandolo via via
             reconstruct_path(came_from, end, draw, start)
             end.make_end()
-            return True
+            return 0
 
         for neighbor in current.neighbors: # se non sono arrivato alla fine allora guardo i miei vicini
             temp_g_score = g_score[current] + 1 # +1 è il costo di fare quel passo fino al vicino
@@ -69,4 +69,4 @@ def algorithm(draw, grid, start, end):
         if current != start:
             current.make_closed() # se mi sono spostato e non sono tornato su start allora coloro in rosso per far capire che ho gia controlato questa casella
 
-    return False
+    return 1

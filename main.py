@@ -3,7 +3,8 @@ import math
 from node import *
 from algorithm import algorithm
 
-WIDTH = 800
+WIDTH = 600
+UI_OFFSET = 10
 WIN = pygame.display.set_mode((WIDTH, WIDTH))
 pygame.display.set_caption("A* Pathfinding Visualizer")
 
@@ -14,43 +15,61 @@ def make_grid(rows, width):
         grid.append([])
         for j in range(rows):
             node = Node(i, j, gap, rows)
+            if j >= rows - UI_OFFSET:
+                node.make_barrier()
             grid[i].append(node)
     return grid
 
 def draw_grid(win, rows, width):
     gap = width // rows
-    for i in range(rows):
+    limit_rows = rows - UI_OFFSET
+    limit_pixel = limit_rows * gap
+
+    for i in range(limit_rows + 1): 
         pygame.draw.line(win, GREY, (0, i * gap), (width, i * gap))
-        for j in range(rows):
-            pygame.draw.line(win, GREY, (j * gap, 0), (j * gap, width))
+        
+    for j in range(rows):
+        pygame.draw.line(win, GREY, (j * gap, 0), (j * gap, limit_pixel))
 
 def draw(win, grid, rows, width):
     win.fill(WHITE)
-    
     for row in grid:
-        for node in row:
+        for node in row[:rows - UI_OFFSET]: 
             node.draw(win)
-    
     draw_grid(win, rows, width)
     pygame.display.update()
 
 def get_clicked_pos(pos, rows, width):
     gap = width // rows
-    y, x = pos
-    
-    row = y // gap
-    col = x // gap
-    
+    x, y = pos
+    row = x // gap
+    col = y // gap
     return row, col
+
+def run_simulation(grid, ROWS, start, end, win, width):
+    
+    reset(grid, ROWS, start, end)
+
+    for row in grid:
+        for node in row:
+            node.update_neighbors(grid)
+    
+    ret = algorithm(lambda: draw(win, grid, ROWS, width), grid, start, end)
+    return ret
+
+def reset(grid, ROWS, start, end):
+    for row in grid:
+        for node in row[:ROWS - UI_OFFSET]:
+            if not node.is_barrier() and node != end and node != start:
+                node.reset()
 
 def main(win, width):
     ROWS = 50
     grid = make_grid(ROWS, width)
-
     start = None
     end = None
-
     run = True
+
     while run:
         draw(win, grid, ROWS, width)
         
@@ -61,56 +80,44 @@ def main(win, width):
             if pygame.mouse.get_pressed()[0]: 
                 pos = pygame.mouse.get_pos()
                 row, col = get_clicked_pos(pos, ROWS, width)
-                spot = grid[row][col]
                 
-                if not start and spot != end:
-                    start = spot
-                    start.make_start()
-                elif not end and spot != start:
-                    end = spot
-                    end.make_end()
-                elif spot != end and spot != start:
-                    spot.make_barrier()
+                if col < ROWS - UI_OFFSET: 
+                    spot = grid[row][col]
+                    if not start and spot != end:
+                        start = spot
+                        start.make_start()
+                    elif not end and spot != start:
+                        end = spot
+                        end.make_end()
+                    elif spot != end and spot != start:
+                        spot.make_barrier()
 
             elif pygame.mouse.get_pressed()[2]: 
                 pos = pygame.mouse.get_pos()
                 row, col = get_clicked_pos(pos, ROWS, width)
-                spot = grid[row][col]
-                spot.reset()
-                if spot == start:
-                    start = None
-                elif spot == end:
-                    end = None
+                
+                if row < ROWS - UI_OFFSET:
+                    spot = grid[row][col]
+                    spot.reset()
+                    if spot == start:
+                        start = None
+                    elif spot == end:
+                        end = None
             
             if event.type == pygame.KEYDOWN:
-                
                 if event.key == pygame.K_d:
-                    for row in grid:
-                        for node in row:
-                            node.reset()
-                            if node == start:
-                                start = None
-                            elif node == end:
-                                end = None
+                    start = None
+                    end = None
+                    grid = make_grid(ROWS, width)
 
                 if event.key == pygame.K_r:
-                    for row in grid:
-                        for node in row:
-                            if not node.is_barrier() and node != end and node != start:
-                                node.reset()
+                    reset(grid, ROWS, start, end)
                 
                 elif event.key == pygame.K_SPACE and start and end:
-                    for row in grid:
-                        for node in row:
-                            if not node.is_barrier() and node != end and node != start:
-                                node.reset()
-                                
-                    for row in grid:
-                        for node in row:
-                            node.update_neighbors(grid)
-                    
-                    ret = algorithm(lambda: draw(win, grid, ROWS, width), grid, start, end)
-                    if not ret:
+
+                    ret = run_simulation(grid, ROWS, start, end, win, width)
+                    if ret == 2:
+                        pygame.quit()
                         return
 
     pygame.quit()

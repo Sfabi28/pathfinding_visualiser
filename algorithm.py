@@ -62,7 +62,8 @@ def algorithm(draw, grid, start, end):
                     count += 1 # utilizzato da priorityqueue in caso di g uguale 
                     open_set.put((f_score[neighbor], count, neighbor)) # aggiungo al mio taccuino di celle da controllare il mio vicino, cioè potrei spostarmi lì se non trovo di meglio'
                     open_set_hash.add(neighbor) # aggiungo alla lista hash il mio vicino così quando avrò la necessità di controllare la sua presenza sarà instantanea
-                    neighbor.make_open() # coloro il vicino per far capire che l'ho aggiunta al taccuino
+                    if neighbor != end:
+                        neighbor.make_open() # coloro il vicino per far capire che l'ho aggiunta al taccuino
         draw() # disegno la mappa
 
         if current != start:

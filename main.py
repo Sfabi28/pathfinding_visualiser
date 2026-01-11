@@ -92,6 +92,12 @@ def main(win, width):
                                 start = None
                             elif node == end:
                                 end = None
+
+                if event.key == pygame.K_r:
+                    for row in grid:
+                        for node in row:
+                            if not node.is_barrier() and node != end and node != start:
+                                node.reset()
                 
                 elif event.key == pygame.K_SPACE and start and end:
                     for row in grid:

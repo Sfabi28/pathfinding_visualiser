@@ -47,7 +47,6 @@ def get_clicked_pos(pos, rows, width):
     return row, col
 
 def run_simulation(grid, ROWS, start, end, win, width):
-    
     reset(grid, ROWS, start, end)
 
     for row in grid:
@@ -96,7 +95,7 @@ def main(win, width):
                 pos = pygame.mouse.get_pos()
                 row, col = get_clicked_pos(pos, ROWS, width)
                 
-                if row < ROWS - UI_OFFSET:
+                if col < ROWS - UI_OFFSET:
                     spot = grid[row][col]
                     spot.reset()
                     if spot == start:
@@ -110,11 +109,10 @@ def main(win, width):
                     end = None
                     grid = make_grid(ROWS, width)
 
-                if event.key == pygame.K_r:
+                elif event.key == pygame.K_r:
                     reset(grid, ROWS, start, end)
                 
                 elif event.key == pygame.K_SPACE and start and end:
-
                     ret = run_simulation(grid, ROWS, start, end, win, width)
                     if ret == 2:
                         pygame.quit()

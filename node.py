@@ -4,7 +4,7 @@ RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
-PURPLE = (128, 0, 128)
+PURPLE = (255, 0, 255)
 ORANGE = (255, 165, 0)
 BLUE = (0, 0, 255)
 GREY = (128, 128, 128)
@@ -68,10 +68,12 @@ class Node:
 
         if self.is_start() or self.is_end() or self.is_barrier():
             pygame.draw.rect(win, self.color, (self.x, self.y, self.width, self.width))
-
+        
         elif self.color != self.base_color:
             center = (self.x + self.width // 2, self.y + self.width // 2)
-            radius = self.width // 3
+
+            radius = self.width // 3 
+            
             pygame.draw.circle(win, self.color, center, radius)
     
     def update_neighbors(self, grid):

@@ -3,6 +3,7 @@ import math
 from node import *
 from algorithm import algorithm
 from buttons import *
+from builder import generate_maze
 
 pygame.font.init()
 
@@ -97,13 +98,14 @@ def main(win, width):
     btn_height = 30
     
     clear_btn = Button(20, btn_y, btn_width, btn_height, "Clear (D)")
-    reset_btn = Button(20, btn_y + 40, btn_width, btn_height, "Reset (R)")
+    reset_btn = Button(20, btn_y + 35, btn_width, btn_height, "Reset (R)")
+    builder_btn = Button(20, btn_y + 70, btn_width, btn_height, "Build (M)")
     
     wall_btn = Button(140, btn_y, btn_width, btn_height, "Wall", WALL, WALL_HOVER)
     water_btn = Button(140 + 100, btn_y, btn_width, btn_height, "Water", WATER, WATER_HOVER)
     mud_btn = Button(140 + 200, btn_y, btn_width, btn_height, "Mud", MUD, MUD_HOVER)
     
-    buttons = [clear_btn, reset_btn, wall_btn, water_btn, mud_btn]
+    buttons = [clear_btn, reset_btn, wall_btn, builder_btn, water_btn, mud_btn]
 
     while run:
         draw(win, grid, ROWS, width, buttons, current_brush)
@@ -143,6 +145,12 @@ def main(win, width):
                     elif reset_btn.is_clicked(pos):
                         reset(grid, ROWS, start, end)
 
+                    elif builder_btn.is_clicked(pos):
+                        start = None
+                        end = None
+                        draw_func = lambda: draw(win, grid, ROWS, width, [], None)
+                        start, end = generate_maze(draw_func, grid, ROWS, UI_OFFSET)
+
                     elif wall_btn.is_clicked(pos):
                         current_brush = "barrier"
                     
@@ -173,6 +181,14 @@ def main(win, width):
 
                 if event.key == pygame.K_r:
                     reset(grid, ROWS, start, end)
+
+                elif event.key == pygame.K_m:
+                    start = None
+                    end = None
+                    
+                    draw_func = lambda: draw(win, grid, ROWS, width, [], None)
+                    
+                    start, end = generate_maze(draw_func, grid, ROWS, UI_OFFSET)
                 
                 elif event.key == pygame.K_SPACE and start and end:
                     ret = run_simulation(grid, ROWS, start, end, win, width)

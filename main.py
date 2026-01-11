@@ -82,8 +82,13 @@ def main(win, width):
                     end = None
             
             if event.type == pygame.KEYDOWN:
+                
                 if event.key == pygame.K_SPACE and start and end:
-                    print("Algoritmo avviato...")
+                    for row in grid:
+                        for node in row:
+                            node.update_neighbors(grid)
+                    
+                    # algorithm(...)
 
     pygame.quit()
 

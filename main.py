@@ -1,6 +1,7 @@
 import pygame
 import math
 from node import *
+from algorithm import algorithm
 
 WIDTH = 800
 WIN = pygame.display.set_mode((WIDTH, WIDTH))
@@ -97,7 +98,7 @@ def main(win, width):
                         for node in row:
                             node.update_neighbors(grid)
                     
-                    # algorithm(...)
+                    algorithm(lambda: draw(win, grid, ROWS, width), grid, start, end)
 
     pygame.quit()
 
